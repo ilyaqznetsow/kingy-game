@@ -16,7 +16,22 @@
 }  
 
 () game::start(slice sender_addr, int msg_value, int hash) impure inline_ref {
-    throw_unless(exit::invalid_bet(), msg_value == 1ton());
+    if (msg_value != 1ton()) {
+        int commission = muldiv(msg_value, 10, 100);
+        db::service_balance += commission;
+        int amount = msg_value - commission;
+        cell msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(sender_addr)
+        .store_coins(amount)
+        .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_ref(begin_cell().end_cell())
+        .end_cell();
+    
+        send_raw_message(msg, 0);
+        return ();
+    }
+
     int new_hash = slice_hash(
         begin_cell()
             .store_uint(db::hash, 256)
@@ -32,29 +47,13 @@
 
     int number = rand(10000); ;; [0; 10000)
     db::last_number = number;
-    db::available_balance += 1ton();
-
-    if (number < 10) { ;; win 1/2 available balance
-        int win = db::available_balance / 2;
-        int commission = muldiv(win, 10, 100);
-        win -= commission;
-
-        db::available_balance -= (win + commission);
-        db::service_balance += commission;
-
-        game::payout(sender_addr, win, msg::jackpot());
-
-        return ();
-    }
+    db::available_balance += 1ton();   
 
     if (number < 1000) { ;; win x5
-        int win = 5 * 1ton();
-        int commission = muldiv(win, 10, 100);
-        win -= commission;
 
-        db::available_balance -= (win + commission);
-        db::service_balance += commission;
-        game::payout(sender_addr, win, msg::x5());
+        db::available_balance += msg_value;
+        db::service_balance += msg_value;
+        game::payout(sender_addr, 0, msg::x5());
 
         return ();
     }

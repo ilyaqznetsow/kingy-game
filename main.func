@@ -1,4 +1,4 @@
-#include "lib/stdlib.func";
+#include "imports/stdlib.func";
 #include "struct/const.func";
 #include "struct/storage.func";
 #include "struct/msg.func";
@@ -15,15 +15,18 @@
     init_data();
 
     slice sender_addr = cs~load_msg_addr();
-
-    if (in_msg_body.slice_empty?()) {
-        game::start(sender_addr, msg_value, hash);
-        pack_data();
-        throw(0);
+    int is_admin = equal_slices(sender_addr, db::admin_addr);
+    
+    if (is_admin == 0) {    
+        if (in_msg_body.slice_empty?()) {
+            game::start(sender_addr, msg_value, hash);
+            pack_data();
+            throw(0);
+        }
     }
 
     int op = in_msg_body~load_uint(32);
-    int is_admin = equal_slices(sender_addr, db::admin_addr);
+    
     if (op == op::add_balance()) {
         db::available_balance += msg_value;
         pack_data();

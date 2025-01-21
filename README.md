@@ -1,26 +1,26 @@
-# TON New Year Ruffle
+# lottery
 
-[https://ton.org.in/ny](https://ton.org.in/ny/) or [https://betkingy.com/#/lottery](https://betkingy.com/#/lottery)
+## Project structure
 
+-   `contracts` - source code of all the smart contracts of the project and their dependencies.
+-   `wrappers` - wrapper classes (implementing `Contract` from ton-core) for the contracts, including any [de]serialization primitives and compilation functions.
+-   `tests` - tests for the contracts.
+-   `scripts` - scripts used by the project, mainly the deployment scripts.
 
-# How does it work?
+## How to use
 
-The contract accepts only the 1 TON bids (other amounts will be returned).
-The smart-contract generates a random number from 0 to 10000 to determine if you win or not.
+### Build
 
-If a person wins, he get his winnings reduced by our commission of 10%. The rest of the contract balance remains untouched.
-The winner will receive a message about the win in a transaction comment.
+`npx blueprint build` or `yarn blueprint build`
 
+### Test
 
-# Probability
-0.1% to win the Jackpot (half of the contract balance)
-[0; 10)
+`npx blueprint test` or `yarn blueprint test`
 
-9.9% to win 5 TON.
-[10; 1000)
+### Deploy or run another script
 
-10% to win 2 TON.
-[1000; 2000)
+`npx blueprint run` or `yarn blueprint run`
 
-If there is no win, nothing happens.
-[2000; 9999]
+### Add a new contract
+
+`npx blueprint create ContractName` or `yarn blueprint create ContractName`
