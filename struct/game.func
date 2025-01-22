@@ -47,23 +47,20 @@
 
     int number = rand(10000); ;; [0; 10000)
     db::last_number = number;
-    db::available_balance += 1ton();   
 
-    if (number < 1000) { ;; win x5
-
-        db::available_balance += msg_value;
-        db::service_balance += msg_value;
-        game::payout(sender_addr, 0, msg::x5());
+    if (number < 1000) { ;; nothing
+        int commission = muldiv(msg_value, 10, 100);
+        db::service_balance += commission;
+        game::payout(sender_addr, msg_value - commission, msg::x5());
 
         return ();
     }
 
-    if (number < 2000) { ;; win x2
+    if (number < 2000) { ;; x2 - commission
         int win = 2 * 1ton();
         int commission = muldiv(win, 10, 100);
         win -= commission;
 
-        db::available_balance -= (win + commission);
         db::service_balance += commission;
         game::payout(sender_addr, win, msg::x2());
 

@@ -6,7 +6,6 @@ export type MainConfig = {
 
 export function mainConfigToCell(config: MainConfig): Cell {
     return beginCell()
-        .storeCoins(0) // available_balance
         .storeCoins(0) // service_balance
         .storeAddress(config.adminAddress) // admin_addr
         .storeUint(0, 64) // last_number

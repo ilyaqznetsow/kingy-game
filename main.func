@@ -28,7 +28,6 @@
     int op = in_msg_body~load_uint(32);
     
     if (op == op::add_balance()) {
-        db::available_balance += msg_value;
         pack_data();
         throw(0);
     }
